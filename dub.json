@@ -1,0 +1,8 @@
+{
+  "name": "dstatus",
+  "description": "A commandline status/progress library for D.",
+  "copyright": "Copyright © 2016, Kjartan F. Kvamme",
+  "authors": ["Kjartan F. Kvamme"],
+  "dependencies": {
+  }
+}
