@@ -6,6 +6,8 @@ import std.range : repeat, take;
 import std.stdio : File, stdout, stderr;
 import std.string : leftJustify;
 
+import dstatus.termutils;
+
 class Status {
     private {
         size_t _prevReportLength = 0;
@@ -21,6 +23,11 @@ class Status {
         /* Write a backspace for each character in the previous reported text
            to reset the cursor to its original starting location. */
         output.write('\b'.repeat(_prevReportLength));
+
+        auto termWidth = getTerminalWidth();
+        if (txt.length > termWidth) {
+            txt.length = termWidth;
+        }
 
         // Write the new text
         output.write(txt);
