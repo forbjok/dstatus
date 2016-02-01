@@ -7,10 +7,10 @@ import dstatus.progress;
 
 void main()
 {
-    write("Doing something... ");
-
     auto status = new Status();
     //auto status = new FixedWidthStatus(10);
+
+    status.write("Doing something... ");
 
     for(int i = 0; i <= 100; ++i) {
         status.report("%d%%".format(i));
@@ -26,10 +26,8 @@ void main()
 
     status.end();
 
-    write("Doing something else... ");
-    stdout.flush();
-
     auto progress = new ProgressBar(50);
+    progress.write("Doing something else... ");
 
     for(int i = 0; i <= 100; ++i) {
         progress.progress(i);

@@ -1,10 +1,10 @@
 module dstatus.progress;
 
-import std.algorithm.comparison;
-import std.format;
-import std.range;
-import std.stdio;
-import std.string;
+import std.algorithm.comparison : max;
+import std.conv : to;
+import std.format : format;
+import std.range : repeat;
+import std.string : leftJustify;
 
 import dstatus.status;
 
@@ -14,11 +14,12 @@ class ProgressBar : Status {
     }
 
     this(int barWidth) {
+        super();
         _barWidth = barWidth;
     }
 
     void progress(int percent) {
-        auto barFillLength = cast(int) ((cast(float) percent / 100) * _barWidth);
+        auto barFillLength = ((percent.to!float / 100) * _barWidth).to!int;
 
         auto front = ">";
 
