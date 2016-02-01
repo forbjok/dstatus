@@ -16,7 +16,7 @@ class ProgressBar : Status {
 
     this(int barWidth) {
         super();
-        _barWidth = barWidth;
+        _barWidth = barWidth - 5;
     }
 
     void progress(int percent) {
