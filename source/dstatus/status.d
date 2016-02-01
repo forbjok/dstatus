@@ -60,27 +60,23 @@ class Status {
     }
 }
 
-/*
-class FixedWidthStatus : Status {
-    private {
-        size_t _fixedWidth;
-        string _truncatedSuffix;
+@safe:
+
+pure string makeFixedWidth(string truncatedSuffix = "...", T...)(in size_t width, in T args) {
+    auto str = text(args);
+
+    if (str.length > width) {
+        return "%s%s".format(str.take(width - truncatedSuffix.length), truncatedSuffix);
     }
 
-    this(size_t fixedWidth, string truncatedSuffix = "...") {
-        _fixedWidth = fixedWidth;
-        _truncatedSuffix = truncatedSuffix.take(_fixedWidth).to!string;
-    }
+    return str.leftJustify(width);
+}
 
-    override void report(in char[] text) {
-        const(char)[] newText;
-        if (text.length > _fixedWidth) {
-            newText = "%s%s".format(text.take(_fixedWidth - _truncatedSuffix.length), _truncatedSuffix).leftJustify(_fixedWidth);
-        }
-        else {
-            newText = text.leftJustify(_fixedWidth);
-        }
+unittest {
+    enum testString = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-        Status.report(newText);
-    }
-}*/
+    assert(makeFixedWidth(testString.length, testString) == testString);
+    assert(makeFixedWidth(10, testString) == "ABCDEFG...");
+    assert(makeFixedWidth(27, testString) == "ABCDEFGHIJKLMNOPQRSTUVWXYZ ");
+    assert(makeFixedWidth!("")(10, testString) == "ABCDEFGHIJ");
+}

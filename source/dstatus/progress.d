@@ -1,7 +1,8 @@
 module dstatus.progress;
 
-import std.algorithm.comparison : max;
-import std.conv : to;
+import std.algorithm.comparison : max, min;
+import std.array : array;
+import std.conv : to, text;
 import std.format : format;
 import std.range : repeat;
 import std.string : leftJustify;
@@ -19,20 +20,30 @@ class ProgressBar : Status {
     }
 
     void progress(int percent) {
-        auto barFillLength = ((percent.to!float / 100) * _barWidth).to!int;
-
-        auto front = ">";
-
-        if (barFillLength == 0 || barFillLength == _barWidth)
-            front = "";
-
-        auto fill = '='.repeat(max(barFillLength - front.length, 0));
-        auto empty = ' '.repeat(_barWidth - barFillLength);
-
         auto percentText = "%d%%".format(percent).leftJustify(4);
 
-        auto bar = "[%s%s%s] %s".format(fill, front, empty, percentText);
-
-        report(bar);
+        report(text(makeProgressBar(_barWidth, percent), " ", percentText));
     }
+}
+
+@safe:
+
+pure string makeProgressBar(char leftEndChar = '[', char fillChar = '=', char tipChar = '>', char blankChar = ' ', char rightEndChar = ']')(in size_t width, in int percent) {
+    auto maxFillLength = width - 2;
+    auto fillLength = ((percent.to!float / 100) * maxFillLength).to!int;
+    auto actualFillLength = min(fillLength, maxFillLength);
+
+    auto fill = fillChar.repeat(actualFillLength).array();
+    auto blank = blankChar.repeat(maxFillLength - actualFillLength);
+
+    if (actualFillLength > 0 && actualFillLength < maxFillLength) {
+        fill[$-1] = tipChar;
+    }
+
+    return text(leftEndChar, fill, blank, rightEndChar);
+}
+
+unittest {
+    assert(makeProgressBar(10, 0).length == 10);
+    assert(makeProgressBar(10, 100).length == 10);
 }
