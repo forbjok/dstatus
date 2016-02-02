@@ -81,7 +81,7 @@ auto operationProgressIndicator(alias mkProgressBar = makeProgressBar, alias mkS
 
 @safe:
 
-pure string makeProgressBar(char leftEndChar = '[', char fillChar = '=', char tipChar = '>', char blankChar = ' ', char rightEndChar = ']')(in size_t width, in int percent) {
+pure string makeProgressBar(char leftEndChar = '[', char fillChar = '=', char tipChar = '>', char blankChar = ' ', char rightEndChar = ']')(in int width, in int percent) {
     auto maxFillLength = width - 2;
     auto fillLength = ((percent.to!float / 100) * maxFillLength).to!int;
     auto actualFillLength = min(fillLength, maxFillLength);
@@ -94,6 +94,13 @@ pure string makeProgressBar(char leftEndChar = '[', char fillChar = '=', char ti
     }
 
     return text(leftEndChar, fill, blank, rightEndChar);
+}
+
+pure string makeStepCounter(string divider = " / ")(in int currentStep, in int stepCount) {
+    auto stepCountText = text(stepCount);
+    auto currentStepText = text(currentStep).rightJustify(stepCountText.length);
+
+    return currentStepText ~ divider ~ stepCountText;
 }
 
 unittest {

@@ -8,7 +8,7 @@ import std.string : leftJustify, rightJustify;
 
 class Status {
     private {
-        size_t _prevReportLength = 0;
+        int _prevReportLength = 0;
     }
 
     File output;
@@ -63,14 +63,7 @@ auto status() {
 
 @safe:
 
-pure string makeStepCounter(string divider = " / ")(in int currentStep, in int stepCount) {
-    auto stepCountText = text(stepCount);
-    auto currentStepText = text(currentStep).rightJustify(stepCountText.length);
-
-    return currentStepText ~ divider ~ stepCountText;
-}
-
-pure string makeFixedWidth(string truncatedSuffix = "...", alias justify = leftJustify, T...)(in size_t width, in T args) {
+pure string makeFixedWidth(string truncatedSuffix = "...", alias justify = leftJustify, T...)(in int width, in T args) {
     auto str = text(args);
 
     if (str.length > width) {
