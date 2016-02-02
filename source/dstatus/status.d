@@ -33,6 +33,12 @@ class Status {
         }
     }
 
+    final void clear() {
+        /* Clear last report */
+        output.write('\b'.repeat(_prevReportLength), ' '.repeat(_prevReportLength), '\b'.repeat(_prevReportLength));
+        _prevReportLength = 0;
+    }
+
     final void write(T...)(T args) {
         _write(text(args));
         _prevReportLength = 0;
