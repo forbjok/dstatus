@@ -2,8 +2,6 @@ module dstatus.termutils;
 
 import std.conv : to;
 
-package:
-
 int getTerminalWidth() {
     version (Windows) {
         import core.sys.windows.winbase;

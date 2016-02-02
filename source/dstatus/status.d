@@ -4,9 +4,7 @@ import std.conv : text, to;
 import std.format : format;
 import std.range : repeat, take;
 import std.stdio : File, stdout, stderr;
-import std.string : leftJustify;
-
-import dstatus.termutils;
+import std.string : leftJustify, rightJustify;
 
 class Status {
     private {
@@ -24,11 +22,6 @@ class Status {
            to reset the cursor to its original starting location. */
         output.write('\b'.repeat(_prevReportLength));
 
-        auto termWidth = getTerminalWidth();
-        if (txt.length > termWidth) {
-            txt.length = termWidth;
-        }
-
         // Write the new text
         output.write(txt);
 
@@ -40,16 +33,12 @@ class Status {
         }
     }
 
-    void begin() {
+    final void write(T...)(T args) {
+        _write(text(args));
         _prevReportLength = 0;
     }
 
-    void write(T...)(T args) {
-        _write(text(args));
-        begin();
-    }
-
-    void report(T...)(T args) {
+    final void report(T...)(T args) {
         auto txt = text(args);
 
         _write(txt);
@@ -58,25 +47,37 @@ class Status {
         _prevReportLength = txt.length;
     }
 
-    void end() {
+    final void end() {
         // Write a blank line to move to a new line
         output.writeln();
 
         // Reset this status
-        begin();
+        _prevReportLength = 0;
     }
 }
 
+auto status() {
+    return new Status();
+}
+
+
 @safe:
 
-pure string makeFixedWidth(string truncatedSuffix = "...", T...)(in size_t width, in T args) {
+pure string makeStepCounter(string divider = " / ")(in int currentStep, in int stepCount) {
+    auto stepCountText = text(stepCount);
+    auto currentStepText = text(currentStep).rightJustify(stepCountText.length);
+
+    return currentStepText ~ divider ~ stepCountText;
+}
+
+pure string makeFixedWidth(string truncatedSuffix = "...", alias justify = leftJustify, T...)(in size_t width, in T args) {
     auto str = text(args);
 
     if (str.length > width) {
         return "%s%s".format(str.take(width - truncatedSuffix.length), truncatedSuffix);
     }
 
-    return str.leftJustify(width);
+    return justify(str, width);
 }
 
 unittest {

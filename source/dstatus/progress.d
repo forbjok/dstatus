@@ -8,22 +8,75 @@ import std.range : repeat;
 import std.string : leftJustify;
 
 import dstatus.status;
+import dstatus.termutils;
 
-class ProgressBar : Status {
+class ProgressBar(alias mkProgressBar) : Status {
     private {
-        int _barWidth;
+        int _width;
     }
 
-    this(int barWidth) {
+    this(int width) {
         super();
-        _barWidth = barWidth - 6;
+        _width = width - 6;
     }
 
-    void progress(int percent) {
+    final void progress(int percent) {
         auto percentText = "%d%%".format(percent).leftJustify(4);
 
-        report(text(makeProgressBar(_barWidth, percent), " ", percentText));
+        report(text(mkProgressBar(_width, percent), " ", percentText));
     }
+}
+
+class OperationProgressIndicator(alias mkProgressBar, alias mkStepCounter) : Status {
+    private {
+        int _stepWidth;
+        int _descriptionWidth;
+        int _percentTextWidth;
+        int _progressBarWidth;
+
+        int _stepCount;
+        int _currentStep;
+        string _stepDescription;
+    }
+
+    this(int width, int stepCount) {
+        _stepCount = stepCount;
+
+        _stepWidth = mkStepCounter(_stepCount, _stepCount).length + 1;
+        _descriptionWidth = (width / 2) - _stepWidth;
+
+        auto progressWidth = (width / 2) - 2;
+        _percentTextWidth = 4;
+        _progressBarWidth = progressWidth - _percentTextWidth - 1;
+    }
+
+    final void step(string description) {
+        ++_currentStep;
+        _stepDescription = description;
+    }
+
+    final void progress(int percent) {
+        auto percentText = "%d%%".format(percent).leftJustify(_percentTextWidth);
+
+        auto indicator = text(
+            mkStepCounter(_currentStep, _stepCount),
+            " ",
+            makeFixedWidth(_descriptionWidth, _stepDescription),
+            " ",
+            mkProgressBar(_progressBarWidth, percent),
+            " ",
+            percentText);
+
+        report(indicator);
+    }
+}
+
+auto progressBar(alias mkProgressBar = makeProgressBar)(int width) {
+    return new ProgressBar!(mkProgressBar)(width);
+}
+
+auto operationProgressIndicator(alias mkProgressBar = makeProgressBar, alias mkStepCounter = makeStepCounter)(int width, int stepCount) {
+    return new OperationProgressIndicator!(mkProgressBar, mkStepCounter)(width, stepCount);
 }
 
 @safe:
