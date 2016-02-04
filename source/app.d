@@ -5,15 +5,15 @@ import core.thread;
 
 import dstatus.status;
 import dstatus.progress;
-import dstatus.termutils;
+import dstatus.terminal;
 
 void main()
 {
     auto operation = operationProgressIndicator(getTerminalWidth(), 10);
-    for(int s = 1; s <= 10; ++s) {
+    for(short s = 1; s <= 10; ++s) {
         operation.step(text("Step ", s));
 
-        for(int i = 0; i <= 100; ++i) {
+        for(short i = 0; i <= 100; ++i) {
             operation.progress(i);
             stdout.flush();
             Thread.getThis().sleep(dur!("msecs")(50));
@@ -24,13 +24,13 @@ void main()
 
     status.write("Doing something... ");
 
-    for(int i = 0; i <= 100; ++i) {
+    for(short i = 0; i <= 100; ++i) {
         status.report("%d%%".format(i));
         stdout.flush();
         Thread.getThis().sleep(dur!("msecs")(50));
     }
 
-    for(int i = 100; i >= 0; --i) {
+    for(short i = 100; i >= 0; --i) {
         status.report("%d%%".format(i));
         stdout.flush();
         Thread.getThis().sleep(dur!("msecs")(50));
@@ -41,13 +41,13 @@ void main()
     auto progress = progressBar(40);
     //progress.write("Doing something else... ");
 
-    for(int i = 0; i <= 100; ++i) {
+    for(short i = 0; i <= 100; ++i) {
         progress.progress(i);
         stdout.flush();
         Thread.getThis().sleep(dur!("msecs")(50));
     }
 
-    for(int i = 100; i >= 0; --i) {
+    for(short i = 100; i >= 0; --i) {
         progress.progress(i);
         stdout.flush();
         Thread.getThis().sleep(dur!("msecs")(50));

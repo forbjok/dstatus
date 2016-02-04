@@ -1,8 +1,8 @@
-module dstatus.termutils;
+module dstatus.terminal;
 
 import std.conv : to;
 
-int getTerminalWidth() {
+short getTerminalWidth() {
     version (Windows) {
         import core.sys.windows.winbase;
         import core.sys.windows.wincon;
@@ -10,7 +10,7 @@ int getTerminalWidth() {
 
         CONSOLE_SCREEN_BUFFER_INFO info;
         if (GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &info) == TRUE) {
-            return info.dwSize.X.to!int;
+            return info.dwSize.X;
         }
     }
     else version (Posix) {

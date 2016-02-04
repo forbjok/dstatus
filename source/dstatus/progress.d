@@ -8,19 +8,19 @@ import std.range : repeat;
 import std.string : leftJustify;
 
 import dstatus.status;
-import dstatus.termutils;
+import dstatus.terminal;
 
 class ProgressBar(alias mkProgressBar) : Status {
     private {
         int _width;
     }
 
-    this(int width) {
+    this(in int width) {
         super();
         _width = width - 6;
     }
 
-    final void progress(int percent) {
+    final void progress(in short percent) {
         auto percentText = "%d%%".format(percent).leftJustify(4);
 
         report(text(mkProgressBar(_width, percent), " ", percentText));
@@ -39,7 +39,7 @@ class OperationProgressIndicator(alias mkProgressBar, alias mkStepCounter) : Sta
         string _stepDescription;
     }
 
-    this(int width, int stepCount) {
+    this(in int width, in int stepCount) {
         _stepCount = stepCount;
 
         _stepWidth = mkStepCounter(_stepCount, _stepCount).length + 1;
@@ -50,12 +50,12 @@ class OperationProgressIndicator(alias mkProgressBar, alias mkStepCounter) : Sta
         _progressBarWidth = progressWidth - _percentTextWidth - 1;
     }
 
-    final void step(string description) {
+    final void step(in string description) {
         ++_currentStep;
         _stepDescription = description;
     }
 
-    final void progress(int percent) {
+    final void progress(in short percent) {
         auto percentText = "%d%%".format(percent).leftJustify(_percentTextWidth);
 
         auto indicator = text(
@@ -71,17 +71,17 @@ class OperationProgressIndicator(alias mkProgressBar, alias mkStepCounter) : Sta
     }
 }
 
-auto progressBar(alias mkProgressBar = makeProgressBar)(int width) {
+auto progressBar(alias mkProgressBar = makeProgressBar)(in int width) {
     return new ProgressBar!(mkProgressBar)(width);
 }
 
-auto operationProgressIndicator(alias mkProgressBar = makeProgressBar, alias mkStepCounter = makeStepCounter)(int width, int stepCount) {
+auto operationProgressIndicator(alias mkProgressBar = makeProgressBar, alias mkStepCounter = makeStepCounter)(in int width, in int stepCount) {
     return new OperationProgressIndicator!(mkProgressBar, mkStepCounter)(width, stepCount);
 }
 
 @safe:
 
-pure string makeProgressBar(char leftEndChar = '[', char fillChar = '=', char tipChar = '>', char blankChar = ' ', char rightEndChar = ']')(in int width, in int percent) {
+pure string makeProgressBar(char leftEndChar = '[', char fillChar = '=', char tipChar = '>', char blankChar = ' ', char rightEndChar = ']')(in int width, in short percent) {
     auto maxFillLength = width - 2;
     auto fillLength = ((percent.to!float / 100) * maxFillLength).to!int;
     auto actualFillLength = min(fillLength, maxFillLength);
@@ -96,7 +96,7 @@ pure string makeProgressBar(char leftEndChar = '[', char fillChar = '=', char ti
     return text(leftEndChar, fill, blank, rightEndChar);
 }
 
-pure string makeStepCounter(string divider = " / ")(in int currentStep, in int stepCount) {
+pure string makeStepCounter(string divider = "/")(in int currentStep, in int stepCount) {
     auto stepCountText = text(stepCount);
     auto currentStepText = text(currentStep).rightJustify(stepCountText.length);
 
