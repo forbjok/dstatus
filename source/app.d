@@ -36,8 +36,6 @@ void main()
         Thread.getThis().sleep(dur!("msecs")(50));
     }
 
-    status.end();
-
     auto progress = progressBar(40);
     //progress.write("Doing something else... ");
 
@@ -52,6 +50,4 @@ void main()
         stdout.flush();
         Thread.getThis().sleep(dur!("msecs")(50));
     }
-
-    progress.end();
 }

@@ -8,6 +8,7 @@ import std.string : leftJustify, rightJustify;
 
 class Status {
     private {
+        int _writeLength = 0;
         int _prevReportLength = 0;
     }
 
@@ -31,16 +32,29 @@ class Status {
             auto remainderLength = _prevReportLength - txt.length;
             output.write(' '.repeat(remainderLength), '\b'.repeat(remainderLength));
         }
+
+        // Flush output
+        output.flush();
     }
 
     final void clear() {
-        /* Clear last report */
-        output.write('\b'.repeat(_prevReportLength), ' '.repeat(_prevReportLength), '\b'.repeat(_prevReportLength));
+        /* Clear all text written by us */
+        auto clearLength = _writeLength + _prevReportLength;
+        output.write('\b'.repeat(clearLength), ' '.repeat(clearLength), '\b'.repeat(clearLength));
+
+        _writeLength = 0;
         _prevReportLength = 0;
+
+        // Flush output
+        output.flush();
     }
 
     final void write(T...)(T args) {
-        _write(text(args));
+        auto txt = text(args);
+
+        _write(txt);
+
+        _writeLength += txt.length;
         _prevReportLength = 0;
     }
 
@@ -51,14 +65,6 @@ class Status {
 
         // Store the length of the new text
         _prevReportLength = txt.length;
-    }
-
-    final void end() {
-        // Write a blank line to move to a new line
-        output.writeln();
-
-        // Reset this status
-        _prevReportLength = 0;
     }
 }
 
