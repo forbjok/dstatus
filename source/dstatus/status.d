@@ -75,7 +75,7 @@ auto status() {
 
 @safe:
 
-pure string makeFixedWidth(string truncatedSuffix = "...", alias justify = leftJustify, T...)(in int width, in T args) {
+pure string makeFixedWidth(string truncatedSuffix = "...", alias justify = leftJustify, T...)(in size_t width, in T args) {
     auto str = text(args);
 
     if (str.length > width) {

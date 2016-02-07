@@ -34,12 +34,12 @@ class OperationProgressIndicator(alias mkProgressBar, alias mkStepCounter) : Sta
         size_t _percentTextWidth;
         size_t _progressBarWidth;
 
-        int _stepCount;
-        int _currentStep;
+        size_t _stepCount;
+        size_t _currentStep;
         string _stepDescription;
     }
 
-    this(in size_t width, in int stepCount) {
+    this(in size_t width, in size_t stepCount) {
         _stepCount = stepCount;
 
         _stepWidth = mkStepCounter(_stepCount, _stepCount).length + 1;
@@ -75,7 +75,7 @@ auto progressBar(alias mkProgressBar = makeProgressBar)(in size_t width) {
     return new ProgressBar!(mkProgressBar)(width);
 }
 
-auto operationProgressIndicator(alias mkProgressBar = makeProgressBar, alias mkStepCounter = makeStepCounter)(in size_t width, in int stepCount) {
+auto operationProgressIndicator(alias mkProgressBar = makeProgressBar, alias mkStepCounter = makeStepCounter)(in size_t width, in size_t stepCount) {
     return new OperationProgressIndicator!(mkProgressBar, mkStepCounter)(width, stepCount);
 }
 
@@ -96,7 +96,7 @@ pure string makeProgressBar(char leftEndChar = '[', char fillChar = '=', char ti
     return text(leftEndChar, fill, blank, rightEndChar);
 }
 
-pure string makeStepCounter(string divider = "/")(in int currentStep, in int stepCount) {
+pure string makeStepCounter(string divider = "/")(in size_t currentStep, in size_t stepCount) {
     auto stepCountText = text(stepCount);
     auto currentStepText = text(currentStep).rightJustify(stepCountText.length);
 
