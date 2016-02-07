@@ -8,8 +8,8 @@ import std.string : leftJustify, rightJustify;
 
 class Status {
     private {
-        int _writeLength = 0;
-        int _prevReportLength = 0;
+        size_t _writeLength = 0;
+        size_t _prevReportLength = 0;
     }
 
     File output;

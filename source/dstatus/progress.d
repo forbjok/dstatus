@@ -12,10 +12,10 @@ import dstatus.terminal;
 
 class ProgressBar(alias mkProgressBar) : Status {
     private {
-        int _width;
+        size_t _width;
     }
 
-    this(in int width) {
+    this(in size_t width) {
         super();
         _width = width - 6;
     }
@@ -29,17 +29,17 @@ class ProgressBar(alias mkProgressBar) : Status {
 
 class OperationProgressIndicator(alias mkProgressBar, alias mkStepCounter) : Status {
     private {
-        int _stepWidth;
-        int _descriptionWidth;
-        int _percentTextWidth;
-        int _progressBarWidth;
+        size_t _stepWidth;
+        size_t _descriptionWidth;
+        size_t _percentTextWidth;
+        size_t _progressBarWidth;
 
         int _stepCount;
         int _currentStep;
         string _stepDescription;
     }
 
-    this(in int width, in int stepCount) {
+    this(in size_t width, in int stepCount) {
         _stepCount = stepCount;
 
         _stepWidth = mkStepCounter(_stepCount, _stepCount).length + 1;
@@ -71,19 +71,19 @@ class OperationProgressIndicator(alias mkProgressBar, alias mkStepCounter) : Sta
     }
 }
 
-auto progressBar(alias mkProgressBar = makeProgressBar)(in int width) {
+auto progressBar(alias mkProgressBar = makeProgressBar)(in size_t width) {
     return new ProgressBar!(mkProgressBar)(width);
 }
 
-auto operationProgressIndicator(alias mkProgressBar = makeProgressBar, alias mkStepCounter = makeStepCounter)(in int width, in int stepCount) {
+auto operationProgressIndicator(alias mkProgressBar = makeProgressBar, alias mkStepCounter = makeStepCounter)(in size_t width, in int stepCount) {
     return new OperationProgressIndicator!(mkProgressBar, mkStepCounter)(width, stepCount);
 }
 
 @safe:
 
-pure string makeProgressBar(char leftEndChar = '[', char fillChar = '=', char tipChar = '>', char blankChar = ' ', char rightEndChar = ']')(in int width, in short percent) {
+pure string makeProgressBar(char leftEndChar = '[', char fillChar = '=', char tipChar = '>', char blankChar = ' ', char rightEndChar = ']')(in size_t width, in short percent) {
     auto maxFillLength = width - 2;
-    auto fillLength = ((percent.to!float / 100) * maxFillLength).to!int;
+    auto fillLength = ((percent.to!float / 100) * maxFillLength).to!size_t;
     auto actualFillLength = min(fillLength, maxFillLength);
 
     auto fill = fillChar.repeat(actualFillLength).array();
