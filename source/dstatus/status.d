@@ -6,22 +6,31 @@ import std.range : repeat, take;
 import std.stdio : File, stdout, stderr;
 import std.string : leftJustify, rightJustify;
 
+import dstatus.terminal;
+
 class Status {
     private {
         size_t _writeLength = 0;
         size_t _prevReportLength = 0;
+        TerminalPosition _originalPosition;
+        TerminalPosition _currentPosition;
     }
 
     File output;
 
     this() {
         output = stderr;
+
+        _currentPosition = _originalPosition = getPosition();
+    }
+
+    private TerminalPosition getPosition() {
+        return new TerminalPosition(output);
     }
 
     private void _write(string txt) {
-        /* Write a backspace for each character in the previous reported text
-           to reset the cursor to its original starting location. */
-        output.write('\b'.repeat(_prevReportLength));
+        /* Reset the cursor to the current reporting position */
+        _currentPosition.restore();
 
         // Write the new text
         output.write(txt);
@@ -29,30 +38,34 @@ class Status {
         /* If text is shorter than the previous length,
            overwrite the remainder with spaces. */
         if (txt.length < _prevReportLength) {
-            auto remainderLength = _prevReportLength - txt.length;
-            output.write(' '.repeat(remainderLength), '\b'.repeat(remainderLength));
-        }
+            auto endPosition = getPosition();
+            scope(exit) endPosition.restore();
 
-        // Flush output
-        output.flush();
+            auto remainderLength = _prevReportLength - txt.length;
+            output.write(' '.repeat(remainderLength));
+        }
     }
 
     final void clear() {
+        /* Reset the cursor to its original starting position. */
+        _originalPosition.restore();
+
         /* Clear all text written by us */
         auto clearLength = _writeLength + _prevReportLength;
-        output.write('\b'.repeat(clearLength), ' '.repeat(clearLength), '\b'.repeat(clearLength));
+        output.write(' '.repeat(clearLength));
+
+        /* Reset the cursor to its original starting position. */
+        _originalPosition.restore();
 
         _writeLength = 0;
         _prevReportLength = 0;
-
-        // Flush output
-        output.flush();
     }
 
     final void write(T...)(T args) {
         auto txt = text(args);
 
         _write(txt);
+        _currentPosition = getPosition();
 
         _writeLength += txt.length;
         _prevReportLength = 0;
