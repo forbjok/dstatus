@@ -20,8 +20,7 @@ class Status {
 
     this() {
         output = stderr;
-
-        _currentPosition = _originalPosition = getPosition();
+        anchor();
     }
 
     private TerminalPosition getPosition() {
@@ -44,6 +43,13 @@ class Status {
             auto remainderLength = _prevReportLength - txt.length;
             output.write(' '.repeat(remainderLength));
         }
+    }
+
+    /* Anchor to the current cursor position. */
+    final void anchor() {
+        _currentPosition = _originalPosition = getPosition();
+        _writeLength = 0;
+        _prevReportLength = 0;
     }
 
     final void clear() {
