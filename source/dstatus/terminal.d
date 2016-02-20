@@ -14,8 +14,15 @@ short getTerminalWidth() {
         }
     }
     else version (Posix) {
-        import core.sys.posix.sys.ioctl;
-        import core.sys.posix.unistd;
+        version (FreeBSD) {
+            import core.sys.posix.sys.ioctl : ioctl, winsize;
+            enum TIOCGWINSZ = 0x40087468;
+        }
+        else {
+            import core.sys.posix.sys.ioctl : ioctl, TIOCGWINSZ, winsize;
+        }
+
+        import core.sys.posix.unistd : STDOUT_FILENO;
 
         winsize size;
         if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &size) == 0) {
