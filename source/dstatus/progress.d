@@ -5,7 +5,7 @@ import std.array : array;
 import std.conv : to, text;
 import std.format : format;
 import std.range : repeat;
-import std.string : leftJustify;
+import std.string : leftJustify, rightJustify;
 
 import dstatus.status;
 import dstatus.terminal;

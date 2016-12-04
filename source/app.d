@@ -1,4 +1,4 @@
-import std.conv : to;
+import std.conv : text, to;
 import std.format;
 import std.stdio;
 import core.thread;
